@@ -10,13 +10,15 @@ function App() {
   const [editingContact, setEditingContact] = useState(null);
   const formRef = useRef(null);
 
+  const BASE_URL = "https://contact-management-9yc1.onrender.com/api";
+
   useEffect(() => {
     fetchContacts();
   }, []);
 
   const fetchContacts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/contacts");
+      const response = await fetch(`${BASE_URL}/contacts`);
       const data = await response.json();
       setContacts(data);
     } catch (error) {
@@ -44,13 +46,13 @@ function App() {
   const handleEditContact = (contact) => {
     setEditingContact(contact);
     setShowForm(true);
-    
+
     // Scroll to form after a short delay to ensure it's rendered
     setTimeout(() => {
       if (formRef.current) {
-        formRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
+        formRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
         });
       }
     }, 100);
@@ -62,10 +64,9 @@ function App() {
 
   const handleDeleteContact = async (id) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/contacts/${id}`,
-        { method: "DELETE" }
-      );
+      const response = await fetch(`${BASE_URL}/contacts/${id}`, {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         setContacts((prev) => prev.filter((contact) => contact._id !== id));

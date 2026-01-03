@@ -1,9 +1,23 @@
 import React from "react";
 
-function ContactCard({ contact, onDelete }) {
+const BACKEND_URL = "https://contact-management-9yc1.onrender.com";
+
+function ContactCard({ contact, refreshContacts }) {
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`${BACKEND_URL}/api/contacts/${id}`, {
+        method: "DELETE",
+      });
+
+      // list refresh after delete
+      refreshContacts();
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
+  };
+
   return (
     <div className="bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition">
-      
       <div className="flex justify-between">
         <div>
           <h3 className="font-semibold text-gray-800">
@@ -36,7 +50,7 @@ function ContactCard({ contact, onDelete }) {
       </div>
 
       <button
-        onClick={() => onDelete(contact._id)}
+        onClick={() => handleDelete(contact._id)}
         className="mt-3 text-xs text-red-500 hover:underline"
       >
         Remove
@@ -46,4 +60,3 @@ function ContactCard({ contact, onDelete }) {
 }
 
 export default ContactCard;
-
