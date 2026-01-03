@@ -5,7 +5,11 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors()); // Enable CORS for frontend connection
+app.use(cors({
+  origin: "https://contact-management-smoky.vercel.app/", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
+
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
