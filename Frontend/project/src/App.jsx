@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import ContactForm from "./components/ContactForm";
 import ContactList from "./components/ContactList";
+import { getContacts, deleteContact } from "./api"; // import API functions
 import "./App.css";
 
 function App() {
@@ -10,19 +11,18 @@ function App() {
   const [editingContact, setEditingContact] = useState(null);
   const formRef = useRef(null);
 
-  const BASE_URL = "https://contact-management-9yc1.onrender.com/api";
-
   useEffect(() => {
-    fetchContacts();
+    fetchAllContacts();
   }, []);
 
-  const fetchContacts = async () => {
+  // Fetch contacts using API.js
+  const fetchAllContacts = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${BASE_URL}/contacts`);
-      const data = await response.json();
-      setContacts(data);
+      const response = await getContacts();
+      setContacts(response.data);
     } catch (error) {
-      console.error("Error fetching contacts:", error);
+      console.error("Error fetching contacts:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -47,7 +47,7 @@ function App() {
     setEditingContact(contact);
     setShowForm(true);
 
-    // Scroll to form after a short delay to ensure it's rendered
+    // Scroll to form after a short delay
     setTimeout(() => {
       if (formRef.current) {
         formRef.current.scrollIntoView({
@@ -64,15 +64,11 @@ function App() {
 
   const handleDeleteContact = async (id) => {
     try {
-      const response = await fetch(`${BASE_URL}/contacts/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setContacts((prev) => prev.filter((contact) => contact._id !== id));
-      }
+      await deleteContact(id);
+      setContacts((prev) => prev.filter((contact) => contact._id !== id));
     } catch (error) {
-      console.error("Error deleting contact:", error);
+      console.error("Error deleting contact:", error.response?.data || error.message);
+      alert("Failed to delete contact. Check console for details.");
     }
   };
 
@@ -102,9 +98,7 @@ function App() {
             <button
               onClick={() => {
                 setShowForm((prev) => !prev);
-                if (showForm) {
-                  setEditingContact(null);
-                }
+                if (showForm) setEditingContact(null);
               }}
               className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700 transition"
             >
@@ -117,9 +111,7 @@ function App() {
       <main className="flex-1 overflow-visible lg:overflow-hidden">
         <div
           className={`max-w-7xl mx-auto h-full px-4 py-6 grid gap-8 ${
-            showForm
-              ? "grid-cols-1 lg:grid-cols-[380px_1fr]"
-              : "grid-cols-1"
+            showForm ? "grid-cols-1 lg:grid-cols-[380px_1fr]" : "grid-cols-1"
           }`}
         >
           {showForm && (
@@ -132,6 +124,7 @@ function App() {
               />
             </div>
           )}
+
           <div className="lg:h-full lg:overflow-y-auto no-scrollbar">
             <ContactList
               contacts={contacts}

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// Replace this with your actual deployed backend URL
-const API_BASE_URL = "https://contact-management-9yc1.onrender.com/api"; 
+// Use environment variable
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const API = axios.create({
   baseURL: API_BASE_URL,

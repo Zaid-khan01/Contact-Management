@@ -1,18 +1,14 @@
 import React from "react";
-
-const BACKEND_URL = "https://contact-management-9yc1.onrender.com";
+import { deleteContact } from "../api"; // use the centralized API
 
 function ContactCard({ contact, refreshContacts }) {
   const handleDelete = async (id) => {
     try {
-      await fetch(`${BACKEND_URL}/api/contacts/${id}`, {
-        method: "DELETE",
-      });
-
-      // list refresh after delete
-      refreshContacts();
+      await deleteContact(id); // call the API function
+      refreshContacts(); // refresh the contact list
     } catch (error) {
-      console.error("Delete failed:", error);
+      console.error("Delete failed:", error.response?.data || error.message);
+      alert("Failed to delete contact. Check console for details.");
     }
   };
 
@@ -20,9 +16,7 @@ function ContactCard({ contact, refreshContacts }) {
     <div className="bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition">
       <div className="flex justify-between">
         <div>
-          <h3 className="font-semibold text-gray-800">
-            {contact.name}
-          </h3>
+          <h3 className="font-semibold text-gray-800">{contact.name}</h3>
           <p className="text-xs text-gray-500">{contact.email}</p>
           <p className="text-xs text-gray-500">{contact.phone}</p>
         </div>

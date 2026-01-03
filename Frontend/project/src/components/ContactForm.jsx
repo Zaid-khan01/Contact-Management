@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createContact, updateContact } from "../api"; // import API functions
 
 function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCancelEdit }) {
   const [formData, setFormData] = useState({
@@ -26,7 +27,6 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
         priority: editingContact.priority,
       });
     } else {
-      // Reset form when not editing
       setFormData({
         name: "",
         email: "",
@@ -38,6 +38,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
     }
   }, [editingContact]);
 
+  // Calculate intelligence score
   useEffect(() => {
     let s = 0;
     if (formData.name.trim()) s += 25;
@@ -49,6 +50,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
     setScore(s);
   }, [formData]);
 
+  // Form validation
   const validateForm = () => {
     const e = {};
     if (!formData.name.trim()) e.name = "Name is required";
@@ -74,36 +76,28 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+
     try {
-      const url = editingContact
-        ? `https://contact-management-9yc1.onrender.com/api/contacts/${editingContact._id}`
-        : "https://contact-management-9yc1.onrender.com/api/contacts";
-
-      const method = editingContact ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, score }),
-      });
-
-      if (res.ok) {
-        const contact = await res.json();
-        if (editingContact) {
-          onContactUpdated(contact);
-        } else {
-          onContactAdded(contact);
-        }
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          message: "",
-          category: "Lead",
-          priority: "Medium",
-        });
-        setScore(0);
+      if (editingContact) {
+        const res = await updateContact(editingContact._id, { ...formData, score });
+        onContactUpdated(res.data);
+      } else {
+        const res = await createContact({ ...formData, score });
+        onContactAdded(res.data);
       }
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        category: "Lead",
+        priority: "Medium",
+      });
+      setScore(0);
+    } catch (error) {
+      console.error("Failed to save contact:", error.response?.data || error.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -145,70 +139,54 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        {/* Name */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">
-            NAME *
-          </label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">NAME *</label>
           <input
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="John Doe"
             className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-              errors.name
-                ? "border-red-400 focus:ring-red-300"
-                : "border-gray-300 focus:ring-blue-500"
+              errors.name ? "border-red-400 focus:ring-red-300" : "border-gray-300 focus:ring-blue-500"
             }`}
           />
-          {errors.name && (
-            <p className="text-xs text-red-600 mt-1">{errors.name}</p>
-          )}
+          {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
         </div>
 
+        {/* Email */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">
-            EMAIL *
-          </label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">EMAIL *</label>
           <input
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="john@company.com"
             className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-              errors.email
-                ? "border-red-400 focus:ring-red-300"
-                : "border-gray-300 focus:ring-blue-500"
+              errors.email ? "border-red-400 focus:ring-red-300" : "border-gray-300 focus:ring-blue-500"
             }`}
           />
-          {errors.email && (
-            <p className="text-xs text-red-600 mt-1">{errors.email}</p>
-          )}
+          {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
         </div>
 
+        {/* Phone */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">
-            PHONE *
-          </label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">PHONE *</label>
           <input
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="+91 9876543210"
             className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-              errors.phone
-                ? "border-red-400 focus:ring-red-300"
-                : "border-gray-300 focus:ring-blue-500"
+              errors.phone ? "border-red-400 focus:ring-red-300" : "border-gray-300 focus:ring-blue-500"
             }`}
           />
-          {errors.phone && (
-            <p className="text-xs text-red-600 mt-1">{errors.phone}</p>
-          )}
+          {errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone}</p>}
         </div>
 
+        {/* Message */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">
-            MESSAGE
-          </label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">MESSAGE</label>
           <textarea
             name="message"
             rows="3"
@@ -219,6 +197,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
           />
         </div>
 
+        {/* Category & Priority */}
         <div className="grid grid-cols-2 gap-3">
           <select
             name="category"
@@ -244,33 +223,27 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
           </select>
         </div>
 
+        {/* Score */}
         <div className="rounded-lg border bg-gray-50 p-4">
           <div className="flex justify-between text-xs font-semibold text-gray-600 mb-2">
             <span>INTELLIGENCE SCORE</span>
             <span>{score}/100</span>
           </div>
           <div className="h-2 w-full bg-gray-200 rounded">
-            <div
-              className={`h-full rounded transition-all ${scoreColor}`}
-              style={{ width: `${score}%` }}
-            />
+            <div className={`h-full rounded transition-all ${scoreColor}`} style={{ width: `${score}%` }} />
           </div>
         </div>
 
+        {/* Buttons */}
         <div className="flex gap-3">
           <button
             type="submit"
             disabled={!isFormValid || isSubmitting}
             className="flex-1 rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isSubmitting
-              ? editingContact
-                ? "Updating..."
-                : "Adding..."
-              : editingContact
-              ? "Update Contact"
-              : "Add Contact"}
+            {isSubmitting ? (editingContact ? "Updating..." : "Adding...") : editingContact ? "Update Contact" : "Add Contact"}
           </button>
+
           {editingContact && (
             <button
               type="button"
