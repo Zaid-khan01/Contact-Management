@@ -76,8 +76,8 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
     setIsSubmitting(true);
     try {
       const url = editingContact
-        ? `http://localhost:5000/api/contacts/${editingContact._id}`
-        : "http://localhost:5000/api/contacts";
+        ? `https://contact-management-9yc1.onrender.com/api/contacts/${editingContact._id}`
+        : "https://contact-management-9yc1.onrender.com/api/contacts";
 
       const method = editingContact ? "PUT" : "POST";
 
