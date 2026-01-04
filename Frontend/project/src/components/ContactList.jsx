@@ -42,7 +42,6 @@ function ContactList({ contacts, onDeleteContact, onEditContact }) {
           </span>
         </div>
 
-        {/* Filters & Sort */}
         <div className="flex flex-wrap gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-xs font-semibold uppercase text-gray-500">
