@@ -1,16 +1,144 @@
-# React + Vite
+# 📇 Smart Contact Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Smart Contact Manager** is a modern, full-stack web application that helps you **store, manage, and organize contacts efficiently** with a clean UI and a powerful backend. Built with scalability and performance in mind, it offers **real-time CRUD operations**, smooth animations, and secure API communication.
 
-Currently, two official plugins are available:
+Whether you're managing personal contacts or building a production-ready CRUD system — **Smart Contact Manager is a solid, deployable solution.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
+## 📸 Glimpse of Smart Contacts
 
-## React Compiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🔍 What is Smart Contact Manager?
 
-## Expanding the ESLint configuration
+**Smart Contact Manager** allows users to:
+- Create, update, and delete contacts
+- Categorize contacts (Lead, Client, Partner, Vendor)
+- Manage contact priority and intelligence score
+- Interact with a fast, REST-based backend
+- Use a responsive UI optimized for all devices
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+It is ideal for **students, developers, and recruiters** looking for a clean full-stack project.
+
+---
+
+## ✨ Features
+
+✅ Add, edit, and delete contacts in real time  
+✅ Category-based contact management  
+✅ Priority & intelligence score support  
+✅ Fully responsive modern UI  
+✅ REST API integration using Axios  
+✅ Proper error handling & loading states  
+✅ Clean component-based architecture  
+✅ Production-ready deployment  
+
+---
+
+## 🛠️ Tech Stack
+
+### 🔹 Frontend (📁 `frontend`)
+- React.js (Vite)
+- Tailwind CSS
+- Axios
+- React Hooks
+- Lucide Icons
+- Modern responsive UI
+
+### 🔹 Backend (📁 `backend`)
+- Node.js
+- Express.js
+- MongoDB with Mongoose
+- RESTful APIs
+- CORS & Environment-based configuration
+
+### 🔹 Deployment
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
+
+---
+
+## 🌐 Live Demo
+
+**Frontend:**  
+https://contact-management-baia.vercel.app  
+
+**Backend API:**  
+https://contact-management-9yc1.onrender.com/api  
+
+---
+
+## 🗂️ Project Structure
+
+```bash
+Contact-Management/
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   └── vite.config.js
+│
+├── backend/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── config/
+│   ├── server.js
+│   └── package.json
+│
+└── README.md
+
+```
+
+## 🛠️ Installation & Setup
+
+### 🔹 Clone the Repository
+
+```bash
+git clone https://github.com/your-username/contact-management.git
+cd contact-management
+```
+
+### 🔹 Backend Setup (Node + Express)
+
+```bash
+cd backend
+npm install
+```
+
+- Create .env file
+
+```bash
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+```
+
+- Start Backend Server
+```bash
+npm start
+```
+
+### 🔹 Frontend Setup (React + Vite)
+
+```bash
+cd frontend
+npm install
+```
+
+- Create .env file
+
+```bash
+VITE_API_URL=https://contact-management-9yc1.onrender.com/api
+```
+
+- Run Frontend
+```bash
+npm run dev
+```
+
+## Built with ❤️ by [Zaid Khan](https://www.linkedin.com/in/zaid-khan-1123abc/)
