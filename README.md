@@ -4,9 +4,6 @@
 
 Whether you're managing personal contacts or building a production-ready CRUD system — **Smart Contact Manager is a solid, deployable solution.**
 
----
-## 📸 Glimpse of Smart Contacts
-
 
 ## 🔍 What is Smart Contact Manager?
 
