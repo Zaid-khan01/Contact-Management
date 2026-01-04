@@ -1,24 +1,31 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const API = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    Accept: "application/json",
   },
+  withCredentials: false, 
 });
 
-// CREATE CONTACT
-export const createContact = (data) => API.post("/contacts", data);
+export const createContact = async (data) => {
+  return API.post("/contacts", JSON.stringify(data));
+};
 
-// GET CONTACTS
-export const getContacts = () => API.get("/contacts");
+export const getContacts = async () => {
+  return API.get("/contacts");
+};
 
-// UPDATE CONTACT
-export const updateContact = (id, data) => API.put(`/contacts/${id}`, data);
+export const updateContact = async (id, data) => {
+  return API.put(`/contacts/${id}`, JSON.stringify(data));
+};
 
-// DELETE CONTACT 
-export const deleteContact = (id) => API.delete(`/contacts/${id}`);
+export const deleteContact = async (id) => {
+  return API.delete(`/contacts/${id}`);
+};
 
 export default API;
