@@ -108,7 +108,7 @@ function ContactList({ contacts, onDeleteContact, onEditContact }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {sortedContacts.map((contact) => (
             <div
-              key={contact?._id || Math.random()}
+              key={contact._id}
               className="bg-white border border-gray-200 rounded shadow-sm hover:shadow-md transition flex flex-col"
             >
               {/* Top section */}
@@ -126,9 +126,8 @@ function ContactList({ contacts, onDeleteContact, onEditContact }) {
                       {contact?.category || "Lead"}
                     </span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded font-semibold ${
-                        priorityClasses[contact?.priority] || "bg-gray-200 text-gray-700"
-                      }`}
+                      className={`text-xs px-2 py-0.5 rounded font-semibold ${priorityClasses[contact?.priority] || "bg-gray-200 text-gray-700"
+                        }`}
                     >
                       {contact?.priority || "Medium"}
                     </span>
@@ -185,7 +184,9 @@ function ContactList({ contacts, onDeleteContact, onEditContact }) {
                       Edit
                     </button>
                     <button
-                      onClick={() => onDeleteContact(contact?._id)}
+                      onClick={() => {
+                        if (contact?._id) onDeleteContact(contact._id);
+                      }}
                       className="border border-gray-300 text-gray-700 px-3 py-1 rounded text-xs font-medium hover:bg-red-600 hover:text-white hover:border-red-600 transition"
                     >
                       Remove
