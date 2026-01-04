@@ -10,15 +10,15 @@ const API = axios.create({
 });
 
 // CREATE CONTACT
-export const createContact = (data) => API.post("/api/contacts", data);
+export const createContact = (data) => API.post("/contacts", data);
 
 // GET CONTACTS
-export const getContacts = () => API.get("/api/contacts");
+export const getContacts = () => API.get("/contacts");
 
 // UPDATE CONTACT
-export const updateContact = (id, data) => API.put(`/api/contacts/${id}`, data);
+export const updateContact = (id, data) => API.put(`/contacts/${id}`, data);
 
 // DELETE CONTACT 
-export const deleteContact = (id) => API.delete(`/api/contacts/${id}`);
+export const deleteContact = (id) => API.delete(`/contacts/${id}`);
 
 export default API;
