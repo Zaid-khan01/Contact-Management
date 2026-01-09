@@ -100,7 +100,6 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
       setErrors({});
     } catch (error) {
       console.error("Failed to save contact:", error.response?.data || error.message);
-      // You could add an error state here to show in the UI
       alert("Failed to save contact. Please try again.");
     } finally {
       setIsSubmitting(false);
