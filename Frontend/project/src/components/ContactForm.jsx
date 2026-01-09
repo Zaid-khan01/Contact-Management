@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createContact, updateContact } from "../api"; // import API functions
+import { createContact, updateContact } from "../api";
 
 function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCancelEdit }) {
   const [formData, setFormData] = useState({
@@ -58,7 +58,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       e.email = "Invalid email format";
     if (!formData.phone.trim()) e.phone = "Phone is required";
-    else if (formData.phone.length < 10)
+    else if (formData.phone.replace(/\D/g, '').length < 10)
       e.phone = "Phone must be at least 10 digits";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -66,6 +66,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error for this field when user starts typing
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: "" });
     }
@@ -96,8 +97,11 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
         priority: "Medium",
       });
       setScore(0);
+      setErrors({});
     } catch (error) {
       console.error("Failed to save contact:", error.response?.data || error.message);
+      // You could add an error state here to show in the UI
+      alert("Failed to save contact. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -120,7 +124,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
   const isFormValid =
     formData.name &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
-    formData.phone.length >= 10;
+    formData.phone.replace(/\D/g, '').length >= 10;
 
   const scoreColor =
     score >= 75 ? "bg-green-600" : score >= 50 ? "bg-yellow-500" : "bg-red-600";
@@ -141,59 +145,96 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
       <form onSubmit={handleSubmit} className="p-6 space-y-5">
         {/* Name */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">NAME *</label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">
+            NAME *
+          </label>
           <input
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="John Doe"
-            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-              errors.name ? "border-red-400 focus:ring-red-300" : "border-gray-300 focus:ring-blue-500"
+            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 transition ${
+              errors.name 
+                ? "border-red-400 focus:ring-red-300" 
+                : "border-gray-300 focus:ring-blue-500"
             }`}
           />
-          {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
+          {errors.name && (
+            <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+              </svg>
+              {errors.name}
+            </p>
+          )}
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">EMAIL *</label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">
+            EMAIL *
+          </label>
           <input
             name="email"
+            type="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="john@company.com"
-            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-              errors.email ? "border-red-400 focus:ring-red-300" : "border-gray-300 focus:ring-blue-500"
+            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 transition ${
+              errors.email 
+                ? "border-red-400 focus:ring-red-300" 
+                : "border-gray-300 focus:ring-blue-500"
             }`}
           />
-          {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
+          {errors.email && (
+            <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+              </svg>
+              {errors.email}
+            </p>
+          )}
         </div>
 
         {/* Phone */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">PHONE *</label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">
+            PHONE *
+          </label>
           <input
             name="phone"
+            type="tel"
             value={formData.phone}
             onChange={handleChange}
             placeholder="+91 9876543210"
-            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-              errors.phone ? "border-red-400 focus:ring-red-300" : "border-gray-300 focus:ring-blue-500"
+            className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 transition ${
+              errors.phone 
+                ? "border-red-400 focus:ring-red-300" 
+                : "border-gray-300 focus:ring-blue-500"
             }`}
           />
-          {errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone}</p>}
+          {errors.phone && (
+            <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+              </svg>
+              {errors.phone}
+            </p>
+          )}
         </div>
 
         {/* Message */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">MESSAGE</label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">
+            MESSAGE
+          </label>
           <textarea
             name="message"
             rows="3"
             value={formData.message}
             onChange={handleChange}
             placeholder="Context, notes, or background info"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
 
@@ -203,7 +244,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           >
             <option>Lead</option>
             <option>Client</option>
@@ -215,7 +256,7 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           >
             <option>Low</option>
             <option>Medium</option>
@@ -223,15 +264,23 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
           </select>
         </div>
 
-        {/* Score */}
+        {/* Intelligence Score */}
         <div className="rounded-lg border bg-gray-50 p-4">
           <div className="flex justify-between text-xs font-semibold text-gray-600 mb-2">
             <span>INTELLIGENCE SCORE</span>
             <span>{score}/100</span>
           </div>
-          <div className="h-2 w-full bg-gray-200 rounded">
-            <div className={`h-full rounded transition-all ${scoreColor}`} style={{ width: `${score}%` }} />
+          <div className="h-2 w-full bg-gray-200 rounded overflow-hidden">
+            <div 
+              className={`h-full rounded transition-all duration-500 ${scoreColor}`} 
+              style={{ width: `${score}%` }} 
+            />
           </div>
+          <p className="text-xs text-gray-500 mt-2">
+            {score >= 75 ? "Excellent quality contact!" : 
+             score >= 50 ? "Good contact information" : 
+             "Add more details to improve score"}
+          </p>
         </div>
 
         {/* Buttons */}
@@ -239,9 +288,15 @@ function ContactForm({ onContactAdded, onContactUpdated, editingContact, onCance
           <button
             type="submit"
             disabled={!isFormValid || isSubmitting}
-            className="flex-1 rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="flex-1 rounded-md bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isSubmitting ? (editingContact ? "Updating..." : "Adding...") : editingContact ? "Update Contact" : "Add Contact"}
+            {isSubmitting && (
+              <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+            )}
+            {isSubmitting 
+              ? (editingContact ? "Updating..." : "Adding...") 
+              : (editingContact ? "Update Contact" : "Add Contact")
+            }
           </button>
 
           {editingContact && (

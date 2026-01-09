@@ -105,14 +105,14 @@ function ContactList({ contacts, onDeleteContact, onEditContact }) {
         </div>
       ) : (
         // Contacts Grid
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedContacts.map((contact) => (
             <div
               key={contact._id}
               className="bg-white border border-gray-200 rounded shadow-sm hover:shadow-md transition flex flex-col"
             >
               {/* Top section */}
-              <div className="flex items-start gap-3 p-5 border-b">
+              <div className="flex items-start gap-4 p-6 border-b">
                 <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-lg flex-shrink-0">
                   {contact?.name ? contact.name.charAt(0).toUpperCase() : "?"}
                 </div>
@@ -143,7 +143,7 @@ function ContactList({ contacts, onDeleteContact, onEditContact }) {
               </div>
 
               {/* Contact info */}
-              <div className="p-5 flex-1 flex flex-col">
+              <div className="p-6 flex-1 flex flex-col space-y-4">
                 <div className="mb-3">
                   <p className="text-xs font-semibold uppercase text-gray-500">Email</p>
                   <a

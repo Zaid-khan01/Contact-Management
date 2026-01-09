@@ -24,3 +24,22 @@ export function getPriority(score) {
   if (score >= 50) return "Medium";
   return "Low";
 }
+
+export function formatPhoneNumber(phone) {
+  if (!phone) return "No Phone";
+  
+  // Remove all non-digit characters
+  const cleaned = phone.replace(/\D/g, '');
+  
+  // Format based on length
+  if (cleaned.length === 10) {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+  } else if (cleaned.length === 11) {
+    return `+${cleaned[0]} (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
+  } else if (cleaned.length === 12) {
+    return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 6)}-${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
+  }
+  
+  // Default: just return cleaned version
+  return cleaned;
+}

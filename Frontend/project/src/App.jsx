@@ -1,15 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import ContactForm from "./components/ContactForm";
 import ContactList from "./components/ContactList";
+import Toast from "./components/Toast";
 import { getContacts, deleteContact } from "./api";
 import "./App.css";
 
 function App() {
-  const [contacts, setContacts] = useState([]); // always array
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
   const formRef = useRef(null);
+  
+  // Toast state
+  const [toast, setToast] = useState(null);
+  
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     fetchAllContacts();
@@ -30,20 +39,22 @@ function App() {
         "Error fetching contacts:",
         error.response?.data || error.message
       );
-      setContacts([]); 
+      setContacts([]);
+      showToast('Failed to load contacts', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // SAFE ADD
+  // Add contact
   const handleContactAdded = (newContact) => {
     if (!newContact || !newContact._id) return;
     setContacts((prev) => [newContact, ...prev]);
     setShowForm(false);
+    showToast('Contact added successfully!', 'success');
   };
 
-  // SAFE UPDATE
+  // Update contact
   const handleContactUpdated = (updatedContact) => {
     if (!updatedContact || !updatedContact._id) return;
 
@@ -54,8 +65,10 @@ function App() {
     );
     setEditingContact(null);
     setShowForm(false);
+    showToast('Contact updated successfully!', 'success');
   };
 
+  // Edit contact
   const handleEditContact = (contact) => {
     if (!contact || !contact._id) return;
 
@@ -72,23 +85,30 @@ function App() {
     }, 100);
   };
 
+  // Cancel edit
   const handleCancelEdit = () => {
     setEditingContact(null);
   };
 
-  // AFE DELETE 
+  // Delete contact
   const handleDeleteContact = async (id) => {
     if (!id) return;
+
+    // Confirmation dialog
+    if (!window.confirm('Are you sure you want to delete this contact? This action cannot be undone.')) {
+      return;
+    }
 
     try {
       await deleteContact(id);
       setContacts((prev) => prev.filter((contact) => contact._id !== id));
+      showToast('Contact deleted successfully!', 'success');
     } catch (error) {
       console.error(
         "Error deleting contact:",
         error.response?.data || error.message
       );
-      alert("Failed to delete contact. Check console for details.");
+      showToast('Failed to delete contact. Please try again.', 'error');
     }
   };
 
@@ -105,6 +125,16 @@ function App() {
 
   return (
     <div className="min-h-screen lg:h-screen bg-gray-50 flex flex-col">
+      {/* Toast Notification */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
+
+      {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -130,6 +160,7 @@ function App() {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="flex-1 overflow-visible lg:overflow-hidden">
         <div
           className={`max-w-7xl mx-auto h-full px-4 py-6 grid gap-8 ${
@@ -155,7 +186,7 @@ function App() {
           <div className="lg:h-full lg:overflow-y-auto no-scrollbar">
             <ContactList
               contacts={contacts.filter(
-                (c) => c && c._id // ONLY REAL CONTACTS
+                (c) => c && c._id
               )}
               onDeleteContact={handleDeleteContact}
               onEditContact={handleEditContact}
